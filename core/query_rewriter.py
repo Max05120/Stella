@@ -7,7 +7,7 @@ questions suitable for semantic retrieval.
 
 import ollama
 
-from .config import LLM_MODEL
+from core.config import LLM_MODEL
 
 
 QUERY_REWRITE_PROMPT = """

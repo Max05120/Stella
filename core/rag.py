@@ -20,16 +20,16 @@ Return grounded answer
 
 import ollama
 import json
-from .tools import TOOL_SCHEMAS, AVAILABLE_FUNCTIONS
-from .config import (
+from core.tools import TOOL_SCHEMAS, AVAILABLE_FUNCTIONS
+from core.config import (
     LLM_MODEL,
     SYSTEM_PROMPT,
-    TOP_K,
+    USER_CONTEXT,
 )
 
-from .retriever import retrieve
-from .memory import ConversationMemory
-from .query_rewriter import rewrite_query
+from core.retriever import retrieve
+from core.memory import ConversationMemory
+from core.query_rewriter import rewrite_query
 
 
 def build_context(results: list[dict]) -> str:
@@ -86,7 +86,7 @@ def ask(question: str, memory: ConversationMemory, top_k: int = None):
     history = memory.get_messages()
 
     messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": SYSTEM_PROMPT + "\n\n" + USER_CONTEXT},
         *history,
         {"role": "user", "content": question},
     ]
@@ -96,13 +96,18 @@ def ask(question: str, memory: ConversationMemory, top_k: int = None):
 
     results = []
     search_query = question
+    tools_used = []
 
     if message.get("tool_calls"):
         messages.append(message)
         for call in message["tool_calls"]:
             fn_name = call["function"]["name"]
             fn_args = call["function"]["arguments"]
-            result = AVAILABLE_FUNCTIONS[fn_name](**fn_args)
+            tools_used.append(fn_name)
+            try:
+                result = AVAILABLE_FUNCTIONS[fn_name](**fn_args)
+            except Exception as e:
+                result = {"error": f"'{fn_name}' failed: {e}"}
 
             if fn_name == "search_knowledge_base":
                 results = result
@@ -115,9 +120,9 @@ def ask(question: str, memory: ConversationMemory, top_k: int = None):
 
     answer = message["content"]
     memory.add_user_message(question)
-    memory.add_assistant_message(answer)
+    memory.add_assistant_message(answer, sources=results, tools_used=tools_used)
 
-    return answer, results, search_query
+    return answer, results, search_query, tools_used
 
 
 if __name__ == "__main__":

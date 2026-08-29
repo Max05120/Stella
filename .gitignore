@@ -5,3 +5,5 @@ __pycache__/
 data/raw/
 data/processed/
 data/chroma_db/
+data/memory.db
+backend.log

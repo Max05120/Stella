@@ -1,7 +1,7 @@
 import requests
 from ddgs import DDGS  # pip install ddgs
-from .retriever import retrieve as _retrieve
-from .config import TOP_K
+from core.retriever import retrieve as _retrieve
+from core.config import TOP_K
 
 def search_knowledge_base(query: str, top_k: int = TOP_K) -> list[dict]:
     """Search the user's local documents for relevant information."""

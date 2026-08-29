@@ -1,7 +1,7 @@
 import streamlit as st
 
-from src.rag import ask
-from src.memory import ConversationMemory
+from core.rag import ask
+from core.memory import ConversationMemory
 
 
 # --------------------------------------------------

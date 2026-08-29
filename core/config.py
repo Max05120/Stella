@@ -7,6 +7,12 @@ Central configuration for Stella's personality and RAG behavior.
 
 LLM_MODEL = "llama3.2"
 
+USER_CONTEXT = """
+Known facts about the user, use naturally when relevant:
+- Lives in Hyderabad, India
+"""
+DEFAULT_LOCATION = "Hyderabad, India"
+
 TOP_K = 5
 
 SYSTEM_PROMPT = """ 

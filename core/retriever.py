@@ -6,7 +6,7 @@ Retrieves semantically relevant chunks from ChromaDB.
 
 import chromadb
 
-from .embed import (
+from core.embed import (
     embed_text,
     CHROMA_DIR,
     COLLECTION_NAME,
