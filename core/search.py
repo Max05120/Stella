@@ -6,7 +6,7 @@ Usage: python3 src/search.py your question here
 """
 import sys
 import chromadb
-from embed import embed_text, CHROMA_DIR, COLLECTION_NAME
+from core.embed import embed_text, CHROMA_DIR, COLLECTION_NAME
 
 def search(query: str, top_k: int = 5):
     """Search the ChromaDB collection for the most similar chunks to the query."""
