@@ -113,6 +113,10 @@ ACTION_GROUPS = {
         "copy",
         "duplicate",
     },
+    
+    "rename": {
+        "rename",
+    },
 
     "create": {
         "create",
@@ -166,6 +170,10 @@ ACTION_ALIASES = {
         "duplicate",
     },
 
+    "rename": {
+        "rename",
+    },
+
     "capture": {
         "capture",
         "screenshot",
@@ -188,6 +196,74 @@ ACTION_ALIASES = {
         "make",
         "new",
     },
+
+    "list": {
+        "list",
+        "find",
+        "show",
+        "display",
+    },
+    "inspect": {
+        "inspect",
+        "examine",
+        "analyze",
+        "check",
+        "get",
+        "read",
+        "list",
+        "show",
+    },
+
+    "inspect": {
+        "inspect",
+        "get",
+        "read",
+        "check",
+    },
+
+    "write": {
+        "write",
+        # "set",
+        "copy",
+        "put",
+    },
+
+    "set": {
+        "set",
+        "change",
+        "mute",
+        "unmute",
+    },
+    "activate": {
+        "activate",
+        # "focus",
+        "switch",
+    },
+
+    "hide": {
+        "hide",
+    },
+
+    "quit": {
+        "quit",
+        "close",
+        "exit",
+    },
+
+    "focus": {
+        "focus",
+        "raise",
+    },
+
+    "resize": {
+        "resize",
+    },
+
+    "press": {
+        "press",
+        "choose",
+    },
+
 }
 
 def _detect_action(
@@ -218,6 +294,36 @@ def resolve_capabilities(
     matches: list[CapabilityMatch] = []
 
     query_action = _detect_action(query)
+    
+    normalized_query = _normalize(
+        query
+    )
+
+    # ---------------------------------------------------------
+    # Exact capability-name fast path
+    # ---------------------------------------------------------
+    #
+    # Structured ActionRequests already know what capability
+    # semantic they need. runner.py often emits the registered
+    # capability name directly.
+    #
+    # Exact names should never be rejected by fuzzy/action
+    # alias resolution.
+    # ---------------------------------------------------------
+
+    for capability in registry.all():
+
+        if (
+            _normalize(capability.name)
+            == normalized_query
+        ):
+            return [
+                CapabilityMatch(
+                    capability=capability,
+                    score=1.0,
+                    matched_text=capability.name,
+                )
+            ]
 
     for capability in registry.all():
 

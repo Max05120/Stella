@@ -18,7 +18,8 @@ from core.capabilities.executor import (
 from core.capabilities.decision import (
     decide_capability,
 )
-
+import tempfile
+from pathlib import Path
 
 initialize_capabilities()
 
@@ -107,6 +108,24 @@ else:
 
     print(result)
 
+
+print()
+print()
+print("FILESYSTEM EXECUTION TEST")
+print("-------------------------")
+
+with tempfile.TemporaryDirectory() as temp_dir:
+    result = execute_capability(
+        "create_folder",
+        {
+            "parent_path": temp_dir,
+            "folder_name": "Stella Test",
+        },
+    )
+
+    print(result)
+
+
 print()
 print()
 print("CAPABILITY DECISION TESTS")
@@ -130,6 +149,49 @@ decision_tests = [
     "make my Mac levitate",
     "change the color of the physical keyboard keys",
 ]
+
+print()
+print()
+print("MOVE FILE EXECUTION TEST")
+print("------------------------")
+
+with tempfile.TemporaryDirectory() as temp_dir:
+    root = Path(temp_dir)
+
+    source_dir = root / "source"
+    destination_dir = root / "destination"
+
+    source_dir.mkdir()
+    destination_dir.mkdir()
+
+    source_file = (
+        source_dir / "stella-test.txt"
+    )
+
+    source_file.write_text(
+        "Hello from Stella."
+    )
+
+    result = execute_capability(
+        "move_file",
+        {
+            "source_path": str(source_file),
+            "destination_path": str(destination_dir),
+        },
+    )
+
+    moved_file = (
+        destination_dir
+        / "stella-test.txt"
+    )
+
+    print(result)
+    print(
+        f"SOURCE EXISTS: {source_file.exists()}"
+    )
+    print(
+        f"MOVED FILE EXISTS: {moved_file.exists()}"
+    )
 
 
 for query in decision_tests:

@@ -116,6 +116,7 @@ def register_workspace_capabilities():
             name="open_application",
 
             family="workspace",
+            action="open",
 
             description=(
                 "Launch an installed "
@@ -149,6 +150,7 @@ def register_workspace_capabilities():
             name="open_url",
 
             family="workspace",
+            action="open",
 
             description=(
                 "Open a URL using the "
@@ -178,6 +180,7 @@ def register_workspace_capabilities():
             name="open_path",
 
             family="workspace",
+            action="open",
 
             description=(
                 "Open a file or directory "
@@ -208,6 +211,7 @@ def register_workspace_capabilities():
             name="reveal_in_finder",
 
             family="workspace",
+            action="open",
 
             description=(
                 "Reveal a file or directory "

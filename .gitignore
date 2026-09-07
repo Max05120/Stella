@@ -9,3 +9,4 @@ data/memory.db
 data/mac_processed/
 data/mac_raw/
 backend.log
+*.bin
