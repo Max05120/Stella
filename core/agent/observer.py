@@ -8,7 +8,10 @@ that the agent runtime can reason about.
 from __future__ import annotations
 
 from typing import Any
-
+from core.agent.recovery import (
+    assess_failure,
+    
+)
 from core.agent.models import AgentObservation
 from core.capabilities.models import (
     ExecutionResult,
@@ -47,7 +50,7 @@ def observe_execution(
         == "success"
     )
 
-    return AgentObservation(
+    observation = AgentObservation(
         capability=execution.capability,
         success=success,
         status=str(status_value),
@@ -56,3 +59,20 @@ def observe_execution(
         error=execution.error,
         requires_confirmation=requires_confirmation,
     )
+
+    if not observation.success:
+        assessment = assess_failure(observation)
+
+        observation.recovery_type = (
+            assessment.recovery_type.value
+        )
+
+        observation.retry_same_action = (
+            assessment.retry_same_action
+        )
+
+        observation.recovery_guidance = (
+            assessment.guidance
+        )
+
+    return observation 

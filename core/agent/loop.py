@@ -114,7 +114,8 @@ class AgentLoop:
                 observation.success and
                 observation.status == "blocked"
             ):
-                
+                state.pending_confirmation = decision
+                state.pending_confirmation_step = step.number 
                 state.status = AgentStatus.WAITING_FOR_CONFIRMATION
 
                 state.final_answer =(
@@ -159,6 +160,146 @@ class AgentLoop:
             #---------------------------------------------------
 
             state.status = AgentStatus.RUNNING
+    def confirm(
+            self,
+            state: AgentState,
+            approved: bool
+    ) -> AgentState:
+        """
+        Resume an agent run that is waiting for confirmation.
+
+        If approved, execute the exact pending capability with 
+        confirmed=True and continue the same run.
+
+        If denied, abort the pending run safely.
+        """
+
+        if state.status != AgentStatus.WAITING_FOR_CONFIRMATION:
+            raise AgentLoopError("Agent is not currently waiting for confirmation.")
+        
+        decision = state.pending_confirmation
+        step_number = state.pending_confirmation_step
+
+        if decision is None:
+            raise AgentLoopError("Agent is waiting for confirmatinobut no pending decision was stored.")
+        
+        #---------------------------------------------------------------
+        # User denied the action
+        #---------------------------------------------------------------
+
+        if not approved:
+            state.pending_confirmation = None
+            state.pending_confirmation_step = None
+            state.status = AgentStatus.ABORTED
+
+            state.final_answer = (
+                "The pending action was not confirmed, "
+                "so I stopped the task."
+            )
+            return state
+        
+        #----------------------------------------------------------------
+        # Validate stored capability
+        #-----------------------------------------------------------------
+
+        capability = decision.capability
+
+        if capability is None:
+
+            state.pending_confirmation = None
+            state.pending_confirmation_step = None
+
+            state.status = AgentStatus.FAILED
+
+            state.final_answer =(
+                "The pending confirmation did not " \
+                "contain a capability."
+            )
+
+            return state
+        
+        #--------------------------------------------------------------
+        # Execute EXACT stored decision with confirmation
+        #--------------------------------------------------------------
+
+        observation = self.tools.execute(
+            capability,
+            decision.arguments,
+            confirmed=True,
+        )
+        # ---------------------------------------------------------
+        # Find original blocked step
+        #
+        # We replace its blocked observation instead of creating
+        # another duplicate step.
+        # ---------------------------------------------------------
+
+        pending_step = None
+
+        for step in state.steps:
+
+            if step.number == step_number:
+                pending_step = step
+                break
+
+        if pending_step is None:
+
+            state.pending_confirmation = None
+            state.pending_confirmation_step = None
+
+            state.status = AgentStatus.FAILED
+
+            state.final_answer = (                
+                "The pending confirmation step " \
+                "could not be found."
+            )
+
+            return state
+        pending_step.observation = observation
+
+        # Confirmation has now been consumed.
+
+        state.pending_confirmation = None
+        state.pending_confirmation_step = None
+
+        #----------------------------------------------------
+        # Confirmed execution failed
+        #----------------------------------------------------
+
+        if not observation.success:
+
+            state.failure_count += 1
+
+            if state.failure_count >= state.max_failures:
+
+                state.status = AgentStatus.FAILED
+
+                state.final_answer = (
+                    observation.error or
+                    observation.message or
+                    (
+                        "the confirmed action failed "
+                        "and the failure limit was reached."
+                    )
+                )
+                return state
+            # Let planner obserrve the failure and recover.
+            state.status = AgentStatus.RUNNING
+            state.final_answer = None
+
+            return self.run(state)
+            
+        #----------------------------------------------------
+        # Confirmed execution succeeded
+        #----------------------------------------------------
+
+        state.status = AgentStatus.RUNNING
+        state.final_answer = None
+
+        return self.run(state)
+            
+
+        
 
     def run(
             self,

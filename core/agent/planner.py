@@ -134,6 +134,42 @@ observation returned an unexpected answer.
 If the user asks you to report something and the relevant observation
 already contains the answer, choose COMPLETE and report that answer.
 
+FAILURE RECOVERY RULES:
+
+When a previous tool failed, inspect its RECOVERY_TYPE,
+RETRY_SAME_ACTION, and RECOVERY_GUIDANCE before deciding what to do.
+
+A failed tool call is an observation about the real environment.
+Do not ignore it.
+
+If RETRY_SAME_ACTION is False, do not issue the same capability with
+the same arguments again.
+
+For NOT_FOUND failures, prefer discovery or inspection tools that can
+resolve the correct resource before trying another action.
+
+For ALREADY_EXISTS failures, treat the existing resource as potentially
+satisfying only the creation requirement that failed.
+
+Then re-read the ORIGINAL GOAL and continue with every remaining
+unsatisfied requirement.
+
+Example:
+If the goal is "Create folder X and then open it", and create_folder
+reports ALREADY_EXISTS, the creation requirement may already be
+satisfied, but the open requirement is NOT satisfied.
+
+The correct next action is to open the existing folder.
+Do NOT choose COMPLETE until the remaining requirement is satisfied.
+
+For PERMISSION_DENIED failures, do not repeatedly retry the blocked
+operation. Use another valid strategy or explain the permission issue.
+
+For UNKNOWN failures, prefer a different safe strategy, ASK_USER,
+or ABORT rather than blindly repeating the failed call.
+
+A recovery action must still advance the original user goal.
+Do not perform unrelated actions merely because a tool failed.
 Example:
 
 Goal:
@@ -291,6 +327,11 @@ class AgentPlanner:
                 decision,
             )
 
+            self._validate_completion(
+                state,
+                decision,
+            )
+
             return decision
         
         except AgentPlannerError as first_error:
@@ -334,7 +375,10 @@ class AgentPlanner:
                     state,
                     decision,
                 )
-
+                self._validate_completion(
+                    state,
+                    decision,
+                )
                 print(
                     "[AGENT PLANNER] "
                     "repair successful"
@@ -354,6 +398,7 @@ class AgentPlanner:
                         f"Repair error: {second_error}"
                     )
                 ) from second_error
+            
     def _validate_progress(
             self,
             state: AgentState,
@@ -371,6 +416,82 @@ class AgentPlanner:
 
         if capability is None:
             return
+        #----------------------------------------------------------
+        # Prevent pointless repetition of non-retryable failures.
+        #----------------------------------------------------------
+        for step in reversed(
+            state.steps
+        ):
+            observation = step.observation
+
+            if observation is None:
+                continue
+
+            if observation.success:
+                continue
+
+            previous = step.decision
+
+            if previous.decision_type != AgentDecisionType.TOOL:
+                continue
+
+            same_capability = (
+                previous.capability == capability
+                )
+            
+            same_arguments = (
+                previous.arguments == decision.arguments
+            )
+
+            if not (
+                same_capability and same_arguments
+            ):
+                continue
+            if (
+                observation.retry_same_action is True
+            ):
+                # One retry is allowed for failures classified
+                # as potentially transient.
+                identical_failures = 0
+
+                for previous_step in state.steps:
+
+                    previous_observation = previous_step.observation
+
+                    if (
+                        previous_observation is None or
+                        previous_observation.success
+                    ):
+                        continue
+                    previous_decision = previous_step.decision
+
+                    if (
+                        previous_decision.capability ==
+                        capability and previous_decision.arguments == 
+                        decision.arguments
+                    ):
+                        identical_failures += 1
+
+                if identical_failures < 2:
+                    break
+
+            guidance =(
+                observation.recovery_guidance 
+                or (
+                    "Choose a differernt strategy"
+                    " instead of repeating the same "
+                    "failed action."
+                )
+            )
+
+            raise AgentPlannerError(
+                (
+                    "This exact tool call already failed " \
+                    "and has been calssified as " \
+                    "non-retryable. " \
+                    f"Recovery guidance: {guidance}"
+                )
+            )
 
         # ---------------------------------------------------------
         # Observation tools
@@ -507,7 +628,85 @@ class AgentPlanner:
                     "querying it again, or choose COMPLETE."
                 )
             )
-        
+    
+    def _validate_completion(
+    self,
+    state: AgentState,
+    decision: AgentDecision,
+    ) -> None:
+        """
+        Reject obviously unsupported COMPLETE decisions.
+
+        This is deliberately conservative. It does not try to
+        fully understand the user's goal deterministically.
+        Instead, it catches completion immediately after a
+        failed action when no subsequent successful action has
+        demonstrated progress.
+        """
+
+        if (
+            decision.decision_type
+            != AgentDecisionType.COMPLETE
+        ):
+            return
+
+        if not state.steps:
+            return
+
+        latest_step = state.steps[-1]
+        observation = latest_step.observation
+
+        if observation is None:
+            raise AgentPlannerError(
+                (
+                    "COMPLETE is not justified because the "
+                    "latest tool step has no observation."
+                )
+            )
+
+        if observation.success:
+            return
+
+        # -----------------------------------------------------
+        # A failed action may still reveal that one subgoal is
+        # already satisfied, such as create_folder reporting
+        # ALREADY_EXISTS.
+        #
+        # That does NOT prove that the entire multi-part goal
+        # has been completed.
+        # -----------------------------------------------------
+
+        if (
+            observation.recovery_type
+            == "already_exists"
+        ):
+            raise AgentPlannerError(
+                (
+                    "COMPLETE is not yet justified. "
+                    "The latest action failed because the "
+                    "requested resource already exists. "
+                    "That may satisfy only the creation part "
+                    "of the goal. Re-read the ORIGINAL GOAL "
+                    "and identify whether any later requirement "
+                    "is still unfinished. If another requested "
+                    "action remains, perform it now. Choose "
+                    "COMPLETE only when every part of the "
+                    "original goal is supported by the "
+                    "observed history."
+                )
+            )
+
+        raise AgentPlannerError(
+            (
+                "COMPLETE is not justified immediately after "
+                "a failed tool execution. Re-read the original "
+                "goal and the recovery guidance. Choose another "
+                "valid action, ASK_USER, or ABORT unless the "
+                "history actually demonstrates that every "
+                "requested requirement is satisfied."
+            )
+        )
+
     def _call_model(
             self,
             prompt: str,
@@ -630,7 +829,13 @@ PREVIOUS STEPS AND OBSERVATIONS
 
 YOUR REJECTED OUTPUT
 --------------------
+{previous_output}
+
+VALIDATION ERROR
+----------------
 {validation_error}
+
+AVAILABLE CAPABILITIES AND EXACT PARAMETERS
 
 AVAILABLE CAPABILITIES AND EXACT PARAMETERS
 -------------------------------------------
@@ -640,16 +845,27 @@ Correct the decision.
 
 IMPORTANT:
 
-- Return the COMPLETE JSON object again.
-- Do not merely explain the errror.
-- Use exactly one capability.
-- Use ONLY paramaeter names listed for that capability.
+- Return one full replacement JSON decision object.
+- "full replacement JSON decision object" does NOT mean decision_type "complete".
+- The replacement decision must correct the exact VALIDATION ERROR above.
+- Do NOT repeat a decision that the validator just rejected.
+- Re-read the ORIGINAL USER GOAL and identify what requirement is still unfinished.
+- Inspect PREVIOUS STEPS AND OBSERVATIONS before choosing the replacement decision.
+- If a failed observation contains RECOVERY_TYPE, RETRY_SAME_ACTION, or
+  RECOVERY_GUIDANCE, obey that recovery information.
+- If ALREADY_EXISTS shows that a creation requirement is already satisfied,
+  do not create the resource again. Continue with the NEXT unfinished
+  requirement using the existing resource.
+- If the validation error says COMPLETE is not justified, decision_type
+  MUST NOT be "complete" in the repaired decision.
+- Use exactly one capability when decision_type is "tool".
+- Use ONLY parameter names listed for that capability.
 - Supply every required parameter.
 - Arguments must contain values needed to execute the action.
-- Do not put family, risk, confirmation, description, or permissions inside arguments.
+- Do not put family, risk, confirmation, description, or permissions
+  inside arguments.
 - Never invent a username.
 - Use "~" for the user's home directory when appropriate.
-- If an object must be created before it can be opened, create it first.
 - Return valid JSON only.
 """.strip()
 
@@ -795,7 +1011,29 @@ IMPORTANT:
                         f"{observation.error}"
                     )
                 )
-            lines.append("")
+                if not observation.success:
+
+                    lines.append(
+                        (
+                            "RECOVERY_TYPE: "
+                            f"{observation.recovery_type}"
+                        )
+                    )
+
+                    lines.append(
+                        (
+                            "RETRY_SAME_ACTION: "
+                            f"{observation.retry_same_action}"
+                        )
+                    )
+
+                    lines.append(
+                        (
+                            "RECOVERY_GUIDANCE: "
+                            f"{observation.recovery_guidance}"
+                        )
+                    )
+                lines.append("")
         return "\n".join(lines)
     
     def _parse_decision(
@@ -953,7 +1191,7 @@ IMPORTANT:
             ),
             reasoning_summary=(
                 str(reasoning_summary)
-                if reasoning_summary is None
+                if reasoning_summary is not None
                 else None
             ),
         )

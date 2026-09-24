@@ -111,6 +111,12 @@ class AgentObservation:
 
     requires_confirmation: bool = False
 
+    recovery_type: str | None = None
+
+    retry_same_action: bool | None = None
+
+    recovery_guidance: str | None = None
+
 
 @dataclass(slots=True)
 class AgentStep:
@@ -150,6 +156,9 @@ class AgentState:
     max_steps: int = 15
     max_failures: int = 3
 
+    pending_confirmation: AgentDecision | None = None
+    pending_confirmation_step: int | None = None
+
     @property
     def step_count(self) -> int:
         return len(self.steps)
@@ -179,6 +188,8 @@ class AgentState:
         """
 
         if self.status in {
+            AgentStatus.WAITING_FOR_CONFIRMATION,
+            AgentStatus.WAITING_FOR_USER,
             AgentStatus.COMPLETED,
             AgentStatus.FAILED,
             AgentStatus.ABORTED,
