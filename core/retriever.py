@@ -5,14 +5,14 @@ Retrieves semantically relevant chunks from ChromaDB.
 """
 
 import chromadb
-
+from functools import lru_cache
 from core.embed import (
     embed_text,
     CHROMA_DIR,
     COLLECTION_NAME,
 )
 
-
+@lru_cache(maxsize=1)
 def get_collection():
     """Connect to the persistent ChromaDB collection."""
 

@@ -13,10 +13,19 @@ from datetime import datetime, timezone
 
 DB_PATH = Path("data/memory.db")
 
+class _ClosingConnection(sqlite3.Connection):
+    def __exit__(self, *args):
+        try:
+            return super().__exit__(*args)
+        finally:
+            self.close()
 
 def _connect():
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(
+                DB_PATH,
+                factory=_ClosingConnection,
+            )
     conn.execute("""
         CREATE TABLE IF NOT EXISTS conversations (
             id TEXT PRIMARY KEY,
@@ -35,6 +44,12 @@ def _connect():
             created_at TEXT NOT NULL
         )
     """)
+    conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS messages_conversation_id
+            ON messages(conversation_id, id)
+            """
+        )
     return conn
 
 
@@ -67,15 +82,118 @@ class ConversationMemory:
                  datetime.now(timezone.utc).isoformat()),
             )
 
-    def get_messages(self, limit: int = 20) -> list[dict]:
-        """Recent messages for the LLM prompt -- no sources/tools_used needed here."""
-        with _connect() as conn:
-            conn.row_factory = sqlite3.Row
-            rows = conn.execute(
-                "SELECT role, content FROM messages WHERE conversation_id = ? ORDER BY id DESC LIMIT ?",
-                (self.conversation_id, limit),
-            ).fetchall()
-        return [{"role": r["role"], "content": r["content"]} for r in reversed(rows)]
+    def add_turn(
+            self,
+            user_message: str,
+            answer: str,
+            sources=None,
+            tools_used=None,
+        ):
+            """
+            Save one complete conversational turn in one transaction.
+            """
+            now = datetime.now(timezone.utc).isoformat()
+
+            with _connect() as conn:
+                conn.executemany(
+                    """
+                    INSERT INTO messages (
+                        conversation_id,
+                        role,
+                        content,
+                        sources,
+                        tools_used,
+                        created_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    [
+                        (
+                            self.conversation_id,
+                            "user",
+                            user_message,
+                            None,
+                            None,
+                            now,
+                        ),
+                        (
+                            self.conversation_id,
+                            "assistant",
+                            answer,
+                            json.dumps(sources) if sources else None,
+                            json.dumps(tools_used) if tools_used else None,
+                            now,
+                        ),
+                    ],
+                )
+
+                conn.execute(
+                    """
+                    UPDATE conversations
+                    SET title = ?
+                    WHERE id = ? AND title IS NULL
+                    """,
+                    (
+                        user_message[:40],
+                        self.conversation_id,
+                    ),
+                )
+
+    def get_messages(
+            self,
+            limit: int = 20,
+            *,
+            include_metadata: bool = False,
+        ) -> list[dict]:
+            """
+            Read recent messages, optionally including evidence/tool metadata.
+            """
+            with _connect() as conn:
+                conn.row_factory = sqlite3.Row
+
+                rows = conn.execute(
+                    """
+                    SELECT role, content, sources, tools_used
+                    FROM messages
+                    WHERE conversation_id = ?
+                    ORDER BY id DESC
+                    LIMIT ?
+                    """,
+                    (
+                        self.conversation_id,
+                        limit,
+                    ),
+                ).fetchall()
+
+            messages = []
+
+            for row in reversed(rows):
+                message = {
+                    "role": row["role"],
+                    "content": row["content"],
+                }
+
+                if include_metadata:
+                    for key in ("sources", "tools_used"):
+                        try:
+                            value = (
+                                json.loads(row[key])
+                                if row[key]
+                                else []
+                            )
+                        except (ValueError, TypeError):
+                            value = []
+
+                        # Older failed searches could store an error dictionary.
+                        message[key] = (
+                            value
+                            if isinstance(value, list)
+                            else []
+                        )
+
+                messages.append(message)
+
+            return messages
 
     def get_full_history(self) -> list[dict]:
         """Every message with sources/tools_used, for the UI to render on load."""

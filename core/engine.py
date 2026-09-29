@@ -26,7 +26,7 @@ from core.actions.confirmation import (
     confirmation_intent,
 )
 from core.rag import ask
-
+import time
 
 class StellaEngine:
 
@@ -218,7 +218,7 @@ class StellaEngine:
                 "answer": answer,
                 "sources": [],
                 "search_query": message,
-                "tools_used": self._active_agent_states(existing),
+                "tools_used": self._agent_tools_used(existing),
             }
         
         state = AgentState(
@@ -235,6 +235,32 @@ class StellaEngine:
         )
     
     def chat(
+            self,
+            message: str,
+            conversation_id: str,
+        ):
+            """
+            Measure the full request, including actions and confirmations.
+            """
+            started = time.perf_counter()
+
+            try:
+                return self._chat(
+                    message,
+                    conversation_id,
+                )
+
+            finally:
+                elapsed = (
+                    time.perf_counter() - started
+                ) * 1000
+
+                print(
+                    "[STELLA REQUEST] "
+                    f"total_ms={elapsed:.1f}"
+                )
+                
+    def _chat(
         self,
         message: str,
         conversation_id: str,
@@ -398,7 +424,19 @@ class StellaEngine:
         # 1. Try Stella's deterministic Mac action system
         # -----------------------------------------------------
 
+        action_started = time.perf_counter()
+
         action_result = run_action(message)
+
+        action_elapsed = (
+            time.perf_counter() - action_started
+        ) * 1000
+
+        print(
+            "[STELLA ACTION] "
+            f"status={action_result.status} "
+            f"elapsed_ms={action_elapsed:.1f}"
+        )
 
         if action_result.status == "SUCCESS":
             answer = format_action_success(
@@ -494,7 +532,57 @@ class StellaEngine:
                 "search_query": message,
                 "tools_used": [],
             }
+        
+        if action_result.status in {
+            "IMPLEMENTABLE",
+            "UNKNOWN",
+        }:
+            answer = action_result.message
 
+            gap = getattr(
+                action_result.decision,
+                "gap",
+                None,
+            )
+
+            if (
+                gap is not None
+                and getattr(
+                    gap,
+                    "explanation",
+                    None,
+                )
+            ):
+                answer += " " + gap.explanation
+
+            self._record_action_turn(
+                memory,
+                message,
+                answer,
+            )
+
+            return {
+                "answer": answer,
+                "sources": [],
+                "search_query": message,
+                "tools_used": [],
+            }
+
+        action_context = None
+
+        if (
+            action_result.status
+            == "ACTION_NOT_UNDERSTOOD"
+        ):
+            action_context = (
+                "The deterministic Mac action parser could not resolve "
+                "an action from this request. No Mac action was executed. "
+                "If the user wants a Mac action, ask for the missing "
+                "target or explain the limitation. "
+                "If this is an information request, answer normally "
+                "using available evidence. "
+                "Do not claim any Mac action succeeded."
+            )
         # -----------------------------------------------------
         # 2. Otherwise continue through Stella's normal
         #    conversational / RAG / tool pipeline
@@ -509,6 +597,7 @@ class StellaEngine:
         ) = ask(
             message,
             memory,
+            action_context=action_context,
         )
 
         return {
