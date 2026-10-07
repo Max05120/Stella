@@ -66,7 +66,7 @@ def execute_capability(
             message=(
                 "Invalid capability arguments."
             ),
-            error=str(exc),
+            error=f"{type(exc).__name__}: {exc}",
         )
 
     try:
@@ -91,5 +91,5 @@ def execute_capability(
             message=(
                 f"Capability '{name}' failed."
             ),
-            error=str(exc),
+            error=f"{type(exc).__name__}: {exc}",
         )

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from typing import Any, Literal
 
 from core.engine import StellaEngine
 
@@ -10,6 +11,10 @@ stella = StellaEngine()
 class ChatRequest(BaseModel):
     message: str
     conversation_id: str
+    mode: Literal["auto", "chat", "agent"] = "auto"
+    run_id: str | None = None
+    confirmation_id: str | None = None
+    resume_token: str | None = None
 
 
 class SourceModel(BaseModel):
@@ -23,6 +28,9 @@ class ChatResponse(BaseModel):
     search_query: str
     sources: list[SourceModel]
     tools_used: list[str]
+    route: str = "chat"
+    agent: dict[str, Any] | None = None
+    agent_error: str | None = None
 
 
 class ConversationSummary(BaseModel):
@@ -39,7 +47,11 @@ def health():
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     try:
-        return stella.chat(request.message, request.conversation_id)
+        return stella.chat(
+            request.message, request.conversation_id, mode=request.mode,
+            run_id=request.run_id, confirmation_id=request.confirmation_id,
+            resume_token=request.resume_token,
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

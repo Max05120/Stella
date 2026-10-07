@@ -1,0 +1,34 @@
+{
+  "model": "llama3.2",
+  "goal": "Find out which application is in front and inspect its windows. Use those observations to describe my current workspace. Do not open, close, move, resize, or change anything.",
+  "cases": [
+    {
+      "case": "full_catalog_schema",
+      "tool_count": 37,
+      "raw_response": "{\"decision_type\":\"ask_user\",\"capability\":null,\"arguments\":{},\"message\":\", which application is currently in the frontmost position?\", \"reasoning_summary\":null}",
+      "valid_first_step": false,
+      "elapsed_seconds": 1.026
+    },
+    {
+      "case": "full_catalog_json",
+      "tool_count": 37,
+      "raw_response": "{\"decision_type\":\"ask_user\",\"capability\":null,\"arguments\":{},\"message\":null,\"reasoning_summary\":\"The application in front is unknown, leaving the target ambiguous. Clarification is needed to proceed.\"}",
+      "error": "AgentPlannerError: A user pause must explain the specific missing information. An empty or generic pause is invalid. If a registered inspection can obtain the requested current state, choose that tool instead. Ask the user only for information the available tools cannot obtain.",
+      "elapsed_seconds": 1.209
+    },
+    {
+      "case": "focused_catalog_schema",
+      "tool_count": 2,
+      "raw_response": "{\n  \"decision_type\": \"ask_user\",\n  \"capability\": null,\n  \"arguments\": {\n    },\n  \"message\": \"Is the application currently frontmost on macOS?\",\n  \"reasoning_summary\": \"No tool evidence yet; compare every requirement with the inspection ledger\" }",
+      "valid_first_step": false,
+      "elapsed_seconds": 2.532
+    },
+    {
+      "case": "focused_catalog_json",
+      "tool_count": 2,
+      "raw_response": "{\n  \"decision_type\": \"ask_user\",\n  \"capability\": null,\n  \"arguments\": {\n    \"question\": \"Is the application currently frontmost on macOS?\"\n  },\n  \"message\": null,\n  \"reasoning_summary\": \"Insufficient information to determine the current application\"\n}",
+      "error": "AgentPlannerError: A user pause must explain the specific missing information. An empty or generic pause is invalid. If a registered inspection can obtain the requested current state, choose that tool instead. Ask the user only for information the available tools cannot obtain.",
+      "elapsed_seconds": 1.585
+    }
+  ]
+}

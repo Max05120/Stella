@@ -5,6 +5,11 @@ Main application interface for Stella.
 """
 
 from collections import OrderedDict
+from pathlib import Path
+from core.request_router import route_request
+from core.agent.sessions import AgentSessions
+from core.agent.persistence import AgentStorageError
+from core.agent.loop import AgentLoopError
 from core.actions.responses import (
     format_action_success,
     format_action_failure,
@@ -40,7 +45,9 @@ class StellaEngine:
         # Deterministic action confirmation
         self._pending_actions = {}
         # Agent runtime.
-        self._agent_loop = AgentLoop()
+        self._agent_sessions = AgentSessions(
+            Path(__file__).resolve().parents[1] / ".stella" / "agents"
+        )
         # Paused agent runs, keyed by conversation.
         self._active_agent_states: dict[
             str,
@@ -188,8 +195,27 @@ class StellaEngine:
             "sources": [],
             "search_query": user_message,
             "tools_used": tools_used,
+            "route": "agent",
+            "agent": {
+                "run_id": state.run_id,
+                "status": state.status.value,
+                "reason": state.termination_reason.value if state.termination_reason else None,
+                "confirmation_id": state.confirmation.confirmation_id if state.confirmation else None,
+                "resume_token": state.resume_token,
+                "diagnostics": state.termination_diagnostics(),
+            },
         }
-    
+
+    def _agent_session_error(self, message, error):
+        return {
+            "answer": str(error),
+            "sources": [],
+            "search_query": message,
+            "tools_used": [],
+            "route": "agent",
+            "agent_error": str(error),
+        }
+
     def run_agent_goal(
             self,
             message: str,
@@ -204,28 +230,12 @@ class StellaEngine:
 
         memory = self._get_memory(conversation_id)
 
-        # Do not overwrite an existing paused agent.
-        existing = (
-            self._active_agent_states.get(conversation_id)
-        )
-
-        if existing is not None:
-            answer = (
-                "An agent task is already waiting " \
-                "for your response."
-            )
-            return {
-                "answer": answer,
-                "sources": [],
-                "search_query": message,
-                "tools_used": self._agent_tools_used(existing),
-            }
-        
-        state = AgentState(
-            goal=AgentGoal(text=message)
-        )
-
-        state = self._agent_loop.run(state)
+        try:
+            context = memory.get_messages(limit=12, include_metadata=True)
+            context = [dict(item, content=str(item.get("content", ""))[:1000]) for item in context]
+            state = self._agent_sessions.start(conversation_id, message, context=context)
+        except (AgentStorageError, AgentLoopError, OSError) as exc:
+            return self._agent_session_error(message, exc)
 
         return self._agent_response(
             state=state,
@@ -234,36 +244,27 @@ class StellaEngine:
             user_message=message,
         )
     
-    def chat(
-            self,
-            message: str,
-            conversation_id: str,
-        ):
-            """
-            Measure the full request, including actions and confirmations.
-            """
-            started = time.perf_counter()
+    def chat(self, message, conversation_id, *, mode="auto", run_id=None,
+             confirmation_id=None, resume_token=None):
+        started = time.perf_counter()
+        try:
+            # Serialize routing as well as execution within a conversation.
+            with self._agent_sessions.store.locked("engine-request:" + conversation_id):
+                result = self._chat(message, conversation_id, mode=mode,
+                                    run_id=run_id, confirmation_id=confirmation_id,
+                                    resume_token=resume_token)
+                result.setdefault("route", "direct")
+                return result
+        except (AgentStorageError, AgentLoopError, OSError) as exc:
+            return self._agent_session_error(message, exc)
+        finally:
+            print(f"[STELLA REQUEST] total_ms={(time.perf_counter()-started)*1000:.1f}")
 
-            try:
-                return self._chat(
-                    message,
-                    conversation_id,
-                )
-
-            finally:
-                elapsed = (
-                    time.perf_counter() - started
-                ) * 1000
-
-                print(
-                    "[STELLA REQUEST] "
-                    f"total_ms={elapsed:.1f}"
-                )
-                
     def _chat(
         self,
         message: str,
         conversation_id: str,
+        *, mode="auto", run_id=None, confirmation_id=None, resume_token=None,
     ):
         memory = self._get_memory(
             conversation_id
@@ -273,65 +274,23 @@ class StellaEngine:
         # -1. Resume a paused autonomous agent confirmation
         #------------------------------------------------------
 
-        agent_state = self._active_agent_states.get(conversation_id)
-
-        if (
-            agent_state is not None
-            and agent_state.status
-            == AgentStatus.WAITING_FOR_CONFIRMATION
-        ):
-            intent = confirmation_intent(message)
-
-            #------------------------------------------------------
-            # User approved agent action
-            #------------------------------------------------------
-
-            if intent is True:
-
-                state = self._agent_loop.confirm(
-                    agent_state,
-                    approved=True,
-                )
-
-                return self._agent_response(
-                    state=state,
-                    conversation_id=conversation_id,
-                    memory=memory,
-                    user_message=message,
-                )
-            
-            #------------------------------------------------------
-            # User denied agent action.
-            #------------------------------------------------------
-
-            if intent is False:
-                state = self._agent_loop.confirm(
-                    agent_state,
-                    approved=False,
-                )
-
-                return self._agent_response(
-                    state=state,
-                    conversation_id=conversation_id,
-                    memory=memory,
-                    user_message=message,
-                )
-            # -----------------------------------------------------
-            # Unrelated message.
-            #
-            # Invalidate the pending destructive agent action
-            # so a later unrelated "yes" cannot execute it.
-            # -----------------------------------------------------
-
-            self._agent_loop.confirm(
-                agent_state,
-                approved=False,
+        try:
+            agent_state = self._agent_sessions.reply(
+                conversation_id, message, run_id=run_id,
+                confirmation_id=confirmation_id, resume_token=resume_token,
+                require_ids=True,
             )
+        except (AgentStorageError, AgentLoopError, OSError) as exc:
+            return self._agent_session_error(message, exc)
 
-            self._active_agent_states.pop(
-                conversation_id,
-                None,
+        if agent_state is not None:
+            return self._agent_response(
+                state=agent_state,
+                conversation_id=conversation_id,
+                memory=memory,
+                user_message=message,
             )
+        self._active_agent_states.pop(conversation_id, None)
 
         # -----------------------------------------------------
         # 0. Resolve a pending destructive-action confirmation
@@ -424,9 +383,20 @@ class StellaEngine:
         # 1. Try Stella's deterministic Mac action system
         # -----------------------------------------------------
 
+        routing = route_request(message, mode)
+        if routing.route == "agent":
+            return self.run_agent_goal(routing.message, conversation_id)
+        if routing.route == "chat":
+            return self._conversation_response(
+                routing.message, memory,
+                "Routing selected conversation. No Mac capability was executed. "
+                "Answer using the normal memory/RAG pipeline; ask for clarification "
+                "if an action was intended. Do not claim a Mac action succeeded.",
+            )
+
         action_started = time.perf_counter()
 
-        action_result = run_action(message)
+        action_result = run_action(routing.message)
 
         action_elapsed = (
             time.perf_counter() - action_started
@@ -588,25 +558,16 @@ class StellaEngine:
         #    conversational / RAG / tool pipeline
         # -----------------------------------------------------
 
-        (
-            answer,
-            results,
-            search_query,
-            tools_used,
-            timings,
-        ) = ask(
-            message,
-            memory,
-            action_context=action_context,
-        )
+        return self._conversation_response(message, memory, action_context)
 
-        return {
-            "answer": answer,
-            "sources": results,
-            "search_query": search_query,
-            "tools_used": tools_used,
-        }
-    
+    def _conversation_response(self, message, memory, action_context=None):
+        answer, results, search_query, tools_used, timings = ask(
+            message, memory, action_context=action_context,
+        )
+        return {"answer": answer, "sources": results,
+                "search_query": search_query, "tools_used": tools_used,
+                "route": "chat"}
+
     def clear_memory(
         self,
         conversation_id: str,
@@ -653,6 +614,7 @@ if __name__ == "__main__":
 
     print("STELLA\n======\n")
 
+    pending_ids = {}
     while True:
 
         message = input("You: ").strip()
@@ -663,6 +625,13 @@ if __name__ == "__main__":
         response = stella.chat(
             message,
             conversation_id,
+            **pending_ids,
+        )
+        agent = response.get("agent") or {}
+        pending_ids = (
+            {key: agent.get(key) for key in ("run_id", "confirmation_id", "resume_token")}
+            if agent.get("status") in {"waiting_for_confirmation", "waiting_for_user"}
+            else {}
         )
 
         print(

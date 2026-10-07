@@ -1,0 +1,306 @@
+{
+  "phase": "6I",
+  "created_utc": "20261005T055945202876Z",
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-27.2-arm64-arm-64bit-Mach-O",
+  "mode": "live_http",
+  "milestone": "NOT_SIGNED_OFF",
+  "cases": [
+    {
+      "case": {
+        "id": "chat_control",
+        "suite": "quick",
+        "mode": "chat",
+        "message": "What is two plus two? Answer in one sentence.",
+        "route": "chat",
+        "required": [],
+        "minimum": 0
+      },
+      "started_utc": "2026-10-05T05:59:45.271586+00:00",
+      "conversation_id": "619249b6-e834-42d5-8eee-97c0390fae7e",
+      "request": {
+        "message": "What is two plus two? Answer in one sentence.",
+        "mode": "chat",
+        "conversation_id": "619249b6-e834-42d5-8eee-97c0390fae7e"
+      },
+      "response": {
+        "answer": "The result of the calculation is four, Max.",
+        "search_query": "What is two plus two? Answer in one sentence.",
+        "sources": [],
+        "tools_used": [],
+        "route": "chat",
+        "agent": null,
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "PASS",
+        "issues": [],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 0.74
+    },
+    {
+      "case": {
+        "id": "natural_auto",
+        "suite": "quick",
+        "mode": "auto",
+        "message": "Could you tell me how loud my Mac is right now?",
+        "route": "action",
+        "required": [
+          "get_system_volume"
+        ],
+        "minimum": 1
+      },
+      "started_utc": "2026-10-05T05:59:46.012651+00:00",
+      "conversation_id": "43d0bdaa-b8f4-4f33-85ab-8f6c7bf5f3d6",
+      "request": {
+        "message": "Could you tell me how loud my Mac is right now?",
+        "mode": "auto",
+        "conversation_id": "43d0bdaa-b8f4-4f33-85ab-8f6c7bf5f3d6"
+      },
+      "response": {
+        "answer": "Sorry Max, I'm not sure I can help with that. I'm not connected to your Mac's hardware, and I don't have the capability to access its current volume level. I can suggest checking the Notification Center or the System Preferences on your Mac to see what the current volume level is, though!",
+        "search_query": "Could you tell me how loud my Mac is right now?",
+        "sources": [],
+        "tools_used": [],
+        "route": "chat",
+        "agent": null,
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "FAIL",
+        "issues": [
+          "Routing mismatch: expected action, received chat",
+          "Required capability not reported: get_system_volume"
+        ],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 4.159
+    },
+    {
+      "case": {
+        "id": "natural_forced",
+        "suite": "quick",
+        "mode": "agent",
+        "message": "Could you tell me how loud my Mac is right now?",
+        "route": "agent",
+        "required": [
+          "get_system_volume"
+        ],
+        "minimum": 1
+      },
+      "started_utc": "2026-10-05T05:59:50.172345+00:00",
+      "conversation_id": "4ce4a392-e41a-412d-a3cb-d0a80e289106",
+      "request": {
+        "message": "Could you tell me how loud my Mac is right now?",
+        "mode": "agent",
+        "conversation_id": "4ce4a392-e41a-412d-a3cb-d0a80e289106"
+      },
+      "response": {
+        "answer": "I stopped because recent tool steps produced no new evidence or successful new action. 5 earlier tool step(s) succeeded; those actions have not been undone.",
+        "search_query": "Could you tell me how loud my Mac is right now?",
+        "sources": [],
+        "tools_used": [
+          "get_frontmost_application",
+          "get_system_volume"
+        ],
+        "route": "agent",
+        "agent": {
+          "run_id": "1dce66ff-4366-460d-a071-1fb4c85eedaa",
+          "status": "blocked",
+          "reason": "no_progress",
+          "confirmation_id": null,
+          "resume_token": null,
+          "diagnostics": {
+            "run_id": "1dce66ff-4366-460d-a071-1fb4c85eedaa",
+            "status": "blocked",
+            "terminal": true,
+            "reason": "no_progress",
+            "summary": "I stopped because recent tool steps produced no new evidence or successful new action. 5 earlier tool step(s) succeeded; those actions have not been undone.",
+            "steps": 5,
+            "failures": 0,
+            "decision_calls": 5,
+            "model_calls": 5,
+            "tool_calls": 5,
+            "global_steps_used": 15,
+            "elapsed_seconds": 108.412,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 3,
+            "productive_steps": 2,
+            "distinct_evidence_count": 2,
+            "decisions_since_progress": {
+              "db6c1822842650805bde477b43ba5cb6bb26e0e14a96adf7fd0e15173807f655": 3
+            },
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": false,
+              "failed_steps": []
+            },
+            "successful_steps": 5,
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": {
+              "capability": "get_system_volume",
+              "success": true,
+              "status": "success",
+              "data": {
+                "volume": 87,
+                "muted": false,
+                "action": "inspect",
+                "context": "system_volume"
+              },
+              "message": "Capability 'get_system_volume' executed successfully.",
+              "error": null,
+              "requires_confirmation": false,
+              "recovery_type": null,
+              "retry_same_action": null,
+              "recovery_guidance": null
+            }
+          }
+        },
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "FAIL",
+        "issues": [
+          "Run did not complete: blocked / no_progress"
+        ],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 108.44
+    },
+    {
+      "case": {
+        "id": "two_step",
+        "suite": "quick",
+        "mode": "agent",
+        "message": "Read the current system volume, then identify the frontmost application. Report both observations. Do not change anything.",
+        "route": "agent",
+        "required": [
+          "get_system_volume",
+          "get_frontmost_application"
+        ],
+        "minimum": 2
+      },
+      "started_utc": "2026-10-05T06:01:38.613850+00:00",
+      "conversation_id": "6cddabcc-809e-4eff-a143-6bc310e06042",
+      "request": {
+        "message": "Read the current system volume, then identify the frontmost application. Report both observations. Do not change anything.",
+        "mode": "agent",
+        "conversation_id": "6cddabcc-809e-4eff-a143-6bc310e06042"
+      },
+      "response": {
+        "answer": "The requested task is complete.",
+        "search_query": "Read the current system volume, then identify the frontmost application. Report both observations. Do not change anything.",
+        "sources": [],
+        "tools_used": [
+          "get_system_volume",
+          "get_frontmost_application"
+        ],
+        "route": "agent",
+        "agent": {
+          "run_id": "72818ab8-990c-44cc-9495-16b7a0902581",
+          "status": "completed",
+          "reason": "goal_satisfied",
+          "confirmation_id": null,
+          "resume_token": null,
+          "diagnostics": {
+            "run_id": "72818ab8-990c-44cc-9495-16b7a0902581",
+            "status": "completed",
+            "terminal": true,
+            "reason": "goal_satisfied",
+            "summary": "The requested task is complete.",
+            "steps": 3,
+            "failures": 0,
+            "decision_calls": 4,
+            "model_calls": 4,
+            "tool_calls": 3,
+            "global_steps_used": 11,
+            "elapsed_seconds": 69.723,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 0,
+            "productive_steps": 2,
+            "distinct_evidence_count": 2,
+            "decisions_since_progress": {},
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": false,
+              "failed_steps": []
+            },
+            "successful_steps": 3,
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": {
+              "capability": "get_frontmost_application",
+              "success": true,
+              "status": "success",
+              "data": {
+                "name": "Code",
+                "bundle_identifier": "com.microsoft.VSCode",
+                "process_identifier": 1692,
+                "action": "inspect",
+                "context": "frontmost_application"
+              },
+              "message": "Capability 'get_frontmost_application' executed successfully.",
+              "error": null,
+              "requires_confirmation": false,
+              "recovery_type": null,
+              "retry_same_action": null,
+              "recovery_guidance": null
+            }
+          }
+        },
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "PASS",
+        "issues": [],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 69.764
+    }
+  ],
+  "planned_cases": [
+    "chat_control",
+    "natural_auto",
+    "natural_forced",
+    "two_step"
+  ],
+  "health": {
+    "status": "ok",
+    "assistant": "Stella"
+  },
+  "interpretation": "Forced agent did not pass. Inspect termination reason, failure categories, tools and backend planner logs before changing only the router."
+}

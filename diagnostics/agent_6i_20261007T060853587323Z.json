@@ -1,0 +1,440 @@
+{
+  "phase": "6I",
+  "diagnostic_revision": "6I.1",
+  "created_utc": "20261007T060853587323Z",
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-27.2-arm64-arm-64bit-Mach-O",
+  "mode": "live_http",
+  "milestone": "NOT_SIGNED_OFF",
+  "cases": [
+    {
+      "case": {
+        "id": "chat_control",
+        "suite": "quick",
+        "mode": "chat",
+        "message": "What is two plus two? Answer in one sentence.",
+        "route": "chat",
+        "required": [],
+        "minimum": 0
+      },
+      "started_utc": "2026-10-07T06:08:53.626610+00:00",
+      "conversation_id": "eb623ada-cfc0-4588-a436-b32178d24bf2",
+      "request": {
+        "message": "What is two plus two? Answer in one sentence.",
+        "mode": "chat",
+        "conversation_id": "eb623ada-cfc0-4588-a436-b32178d24bf2"
+      },
+      "response": {
+        "answer": "The answer to two plus two is four, Max.",
+        "search_query": "What is two plus two? Answer in one sentence.",
+        "sources": [],
+        "tools_used": [],
+        "route": "chat",
+        "agent": null,
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "PASS",
+        "issues": [],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 3.533
+    },
+    {
+      "case": {
+        "id": "natural_auto",
+        "suite": "quick",
+        "mode": "auto",
+        "message": "Could you tell me how loud my Mac is right now?",
+        "route": "action",
+        "required": [
+          "get_system_volume"
+        ],
+        "minimum": 1
+      },
+      "started_utc": "2026-10-07T06:08:57.160635+00:00",
+      "conversation_id": "357b728e-bbe3-4fdf-b665-c4876d088eae",
+      "request": {
+        "message": "Could you tell me how loud my Mac is right now?",
+        "mode": "auto",
+        "conversation_id": "357b728e-bbe3-4fdf-b665-c4876d088eae"
+      },
+      "response": {
+        "answer": "Your system volume is 75%, and sound is not muted.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.",
+        "search_query": "Could you tell me how loud my Mac is right now?",
+        "sources": [],
+        "tools_used": [
+          "get_system_volume"
+        ],
+        "route": "agent",
+        "agent": {
+          "run_id": "d667e444-cf74-43b4-a960-9d2a2f23950e",
+          "status": "completed",
+          "reason": "goal_satisfied",
+          "confirmation_id": null,
+          "resume_token": null,
+          "diagnostics": {
+            "run_id": "d667e444-cf74-43b4-a960-9d2a2f23950e",
+            "status": "completed",
+            "terminal": true,
+            "reason": "goal_satisfied",
+            "summary": "Your system volume is 75%, and sound is not muted.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.",
+            "steps": 1,
+            "failures": 0,
+            "decision_calls": 2,
+            "model_calls": 2,
+            "tool_calls": 1,
+            "global_steps_used": 5,
+            "elapsed_seconds": 14.029,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 0,
+            "productive_steps": 1,
+            "distinct_evidence_count": 1,
+            "decisions_since_progress": {},
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": false,
+              "failed_steps": []
+            },
+            "successful_steps": 1,
+            "inspection_results": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "data": {
+                  "volume": 75,
+                  "muted": false
+                },
+                "summary": "System volume: 75%; not muted."
+              }
+            ],
+            "step_trace": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              }
+            ],
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": {
+              "capability": "get_system_volume",
+              "success": true,
+              "status": "success",
+              "data": {
+                "volume": 75,
+                "muted": false,
+                "action": "inspect",
+                "context": "system_volume"
+              },
+              "message": "Capability 'get_system_volume' executed successfully.",
+              "error": null,
+              "requires_confirmation": false,
+              "recovery_type": null,
+              "retry_same_action": null,
+              "recovery_guidance": null
+            }
+          }
+        },
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "PASS",
+        "issues": [],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 14.081
+    },
+    {
+      "case": {
+        "id": "natural_forced",
+        "suite": "quick",
+        "mode": "agent",
+        "message": "Could you tell me how loud my Mac is right now?",
+        "route": "agent",
+        "required": [
+          "get_system_volume"
+        ],
+        "minimum": 1
+      },
+      "started_utc": "2026-10-07T06:09:11.244171+00:00",
+      "conversation_id": "46b2ef3c-d929-4aff-a879-4873ff5446dd",
+      "request": {
+        "message": "Could you tell me how loud my Mac is right now?",
+        "mode": "agent",
+        "conversation_id": "46b2ef3c-d929-4aff-a879-4873ff5446dd"
+      },
+      "response": {
+        "answer": "Your system volume is 75%, and sound is not muted.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.",
+        "search_query": "Could you tell me how loud my Mac is right now?",
+        "sources": [],
+        "tools_used": [
+          "get_system_volume"
+        ],
+        "route": "agent",
+        "agent": {
+          "run_id": "40c64c86-6a15-48eb-9eb1-5008ce49851a",
+          "status": "completed",
+          "reason": "goal_satisfied",
+          "confirmation_id": null,
+          "resume_token": null,
+          "diagnostics": {
+            "run_id": "40c64c86-6a15-48eb-9eb1-5008ce49851a",
+            "status": "completed",
+            "terminal": true,
+            "reason": "goal_satisfied",
+            "summary": "Your system volume is 75%, and sound is not muted.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.",
+            "steps": 1,
+            "failures": 0,
+            "decision_calls": 2,
+            "model_calls": 2,
+            "tool_calls": 1,
+            "global_steps_used": 5,
+            "elapsed_seconds": 2.556,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 0,
+            "productive_steps": 1,
+            "distinct_evidence_count": 1,
+            "decisions_since_progress": {},
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": false,
+              "failed_steps": []
+            },
+            "successful_steps": 1,
+            "inspection_results": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "data": {
+                  "volume": 75,
+                  "muted": false
+                },
+                "summary": "System volume: 75%; not muted."
+              }
+            ],
+            "step_trace": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              }
+            ],
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": {
+              "capability": "get_system_volume",
+              "success": true,
+              "status": "success",
+              "data": {
+                "volume": 75,
+                "muted": false,
+                "action": "inspect",
+                "context": "system_volume"
+              },
+              "message": "Capability 'get_system_volume' executed successfully.",
+              "error": null,
+              "requires_confirmation": false,
+              "recovery_type": null,
+              "retry_same_action": null,
+              "recovery_guidance": null
+            }
+          }
+        },
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "PASS",
+        "issues": [],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 2.58
+    },
+    {
+      "case": {
+        "id": "two_step",
+        "suite": "quick",
+        "mode": "agent",
+        "message": "Read the current system volume, then identify the frontmost application. Report both observations. Do not change anything.",
+        "route": "agent",
+        "required": [
+          "get_system_volume",
+          "get_frontmost_application"
+        ],
+        "minimum": 2
+      },
+      "started_utc": "2026-10-07T06:09:13.826225+00:00",
+      "conversation_id": "dc09249c-4c52-4ae6-bd8b-0c36351c90ab",
+      "request": {
+        "message": "Read the current system volume, then identify the frontmost application. Report both observations. Do not change anything.",
+        "mode": "agent",
+        "conversation_id": "dc09249c-4c52-4ae6-bd8b-0c36351c90ab"
+      },
+      "response": {
+        "answer": "Your system volume is 75%, and sound is not muted. Safari is the frontmost application.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.\n- Step 2: Frontmost application: Safari.",
+        "search_query": "Read the current system volume, then identify the frontmost application. Report both observations. Do not change anything.",
+        "sources": [],
+        "tools_used": [
+          "get_system_volume",
+          "get_frontmost_application"
+        ],
+        "route": "agent",
+        "agent": {
+          "run_id": "00ce4942-40b0-47c0-a217-3f1f03fc006d",
+          "status": "completed",
+          "reason": "goal_satisfied",
+          "confirmation_id": null,
+          "resume_token": null,
+          "diagnostics": {
+            "run_id": "00ce4942-40b0-47c0-a217-3f1f03fc006d",
+            "status": "completed",
+            "terminal": true,
+            "reason": "goal_satisfied",
+            "summary": "Your system volume is 75%, and sound is not muted. Safari is the frontmost application.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.\n- Step 2: Frontmost application: Safari.",
+            "steps": 2,
+            "failures": 0,
+            "decision_calls": 3,
+            "model_calls": 3,
+            "tool_calls": 2,
+            "global_steps_used": 8,
+            "elapsed_seconds": 21.243,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 0,
+            "productive_steps": 2,
+            "distinct_evidence_count": 2,
+            "decisions_since_progress": {},
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": false,
+              "failed_steps": []
+            },
+            "successful_steps": 2,
+            "inspection_results": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "data": {
+                  "volume": 75,
+                  "muted": false
+                },
+                "summary": "System volume: 75%; not muted."
+              },
+              {
+                "step_number": 2,
+                "capability": "get_frontmost_application",
+                "data": {
+                  "name": "Safari"
+                },
+                "summary": "Frontmost application: Safari."
+              }
+            ],
+            "step_trace": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              },
+              {
+                "step_number": 2,
+                "capability": "get_frontmost_application",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              }
+            ],
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": {
+              "capability": "get_frontmost_application",
+              "success": true,
+              "status": "success",
+              "data": {
+                "name": "Safari",
+                "bundle_identifier": "com.apple.Safari",
+                "process_identifier": 1691,
+                "action": "inspect",
+                "context": "frontmost_application"
+              },
+              "message": "Capability 'get_frontmost_application' executed successfully.",
+              "error": null,
+              "requires_confirmation": false,
+              "recovery_type": null,
+              "retry_same_action": null,
+              "recovery_guidance": null
+            }
+          }
+        },
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "PASS",
+        "issues": [],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 21.276
+    }
+  ],
+  "planned_cases": [
+    "chat_control",
+    "natural_auto",
+    "natural_forced",
+    "two_step"
+  ],
+  "health": {
+    "status": "ok",
+    "assistant": "Stella"
+  },
+  "interpretation": "Review the case checks and compare each answer with its observation. Milestone sign-off is still manual."
+}

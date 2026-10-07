@@ -1,0 +1,1684 @@
+{
+  "phase": "6I",
+  "diagnostic_revision": "6I.1",
+  "created_utc": "20261007T061036256855Z",
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-27.2-arm64-arm-64bit-Mach-O",
+  "mode": "live_http",
+  "milestone": "NOT_SIGNED_OFF",
+  "cases": [
+    {
+      "case": {
+        "id": "chat_control",
+        "suite": "quick",
+        "mode": "chat",
+        "message": "What is two plus two? Answer in one sentence.",
+        "route": "chat",
+        "required": [],
+        "minimum": 0
+      },
+      "started_utc": "2026-10-07T06:10:36.303885+00:00",
+      "conversation_id": "a0c04009-37d6-4180-8fcb-f9717be0f6b2",
+      "request": {
+        "message": "What is two plus two? Answer in one sentence.",
+        "mode": "chat",
+        "conversation_id": "a0c04009-37d6-4180-8fcb-f9717be0f6b2"
+      },
+      "response": {
+        "answer": "Two plus two equals four, Max.",
+        "search_query": "What is two plus two? Answer in one sentence.",
+        "sources": [],
+        "tools_used": [],
+        "route": "chat",
+        "agent": null,
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "PASS",
+        "issues": [],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 0.476
+    },
+    {
+      "case": {
+        "id": "natural_auto",
+        "suite": "quick",
+        "mode": "auto",
+        "message": "Could you tell me how loud my Mac is right now?",
+        "route": "action",
+        "required": [
+          "get_system_volume"
+        ],
+        "minimum": 1
+      },
+      "started_utc": "2026-10-07T06:10:36.780938+00:00",
+      "conversation_id": "6618bede-49ba-4dc8-8687-f34613e02857",
+      "request": {
+        "message": "Could you tell me how loud my Mac is right now?",
+        "mode": "auto",
+        "conversation_id": "6618bede-49ba-4dc8-8687-f34613e02857"
+      },
+      "response": {
+        "answer": "Your system volume is 75%, and sound is not muted.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.",
+        "search_query": "Could you tell me how loud my Mac is right now?",
+        "sources": [],
+        "tools_used": [
+          "get_system_volume"
+        ],
+        "route": "agent",
+        "agent": {
+          "run_id": "62d28da6-3350-4e71-8a30-a6aba7a6ee10",
+          "status": "completed",
+          "reason": "goal_satisfied",
+          "confirmation_id": null,
+          "resume_token": null,
+          "diagnostics": {
+            "run_id": "62d28da6-3350-4e71-8a30-a6aba7a6ee10",
+            "status": "completed",
+            "terminal": true,
+            "reason": "goal_satisfied",
+            "summary": "Your system volume is 75%, and sound is not muted.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.",
+            "steps": 1,
+            "failures": 0,
+            "decision_calls": 2,
+            "model_calls": 2,
+            "tool_calls": 1,
+            "global_steps_used": 5,
+            "elapsed_seconds": 3.09,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 0,
+            "productive_steps": 1,
+            "distinct_evidence_count": 1,
+            "decisions_since_progress": {},
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": false,
+              "failed_steps": []
+            },
+            "successful_steps": 1,
+            "inspection_results": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "data": {
+                  "volume": 75,
+                  "muted": false
+                },
+                "summary": "System volume: 75%; not muted."
+              }
+            ],
+            "step_trace": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              }
+            ],
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": {
+              "capability": "get_system_volume",
+              "success": true,
+              "status": "success",
+              "data": {
+                "volume": 75,
+                "muted": false,
+                "action": "inspect",
+                "context": "system_volume"
+              },
+              "message": "Capability 'get_system_volume' executed successfully.",
+              "error": null,
+              "requires_confirmation": false,
+              "recovery_type": null,
+              "retry_same_action": null,
+              "recovery_guidance": null
+            }
+          }
+        },
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "PASS",
+        "issues": [],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 3.13
+    },
+    {
+      "case": {
+        "id": "natural_forced",
+        "suite": "quick",
+        "mode": "agent",
+        "message": "Could you tell me how loud my Mac is right now?",
+        "route": "agent",
+        "required": [
+          "get_system_volume"
+        ],
+        "minimum": 1
+      },
+      "started_utc": "2026-10-07T06:10:39.911610+00:00",
+      "conversation_id": "103700bd-b7c6-4497-a51b-768dbe95cad3",
+      "request": {
+        "message": "Could you tell me how loud my Mac is right now?",
+        "mode": "agent",
+        "conversation_id": "103700bd-b7c6-4497-a51b-768dbe95cad3"
+      },
+      "response": {
+        "answer": "Your system volume is 75%, and sound is not muted. Safari is the frontmost application.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.\n- Step 2: Frontmost application: Safari.",
+        "search_query": "Could you tell me how loud my Mac is right now?",
+        "sources": [],
+        "tools_used": [
+          "get_system_volume",
+          "get_frontmost_application"
+        ],
+        "route": "agent",
+        "agent": {
+          "run_id": "8d00743c-1963-4ddd-9718-f96e83da598f",
+          "status": "completed",
+          "reason": "goal_satisfied",
+          "confirmation_id": null,
+          "resume_token": null,
+          "diagnostics": {
+            "run_id": "8d00743c-1963-4ddd-9718-f96e83da598f",
+            "status": "completed",
+            "terminal": true,
+            "reason": "goal_satisfied",
+            "summary": "Your system volume is 75%, and sound is not muted. Safari is the frontmost application.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.\n- Step 2: Frontmost application: Safari.",
+            "steps": 2,
+            "failures": 0,
+            "decision_calls": 3,
+            "model_calls": 3,
+            "tool_calls": 2,
+            "global_steps_used": 8,
+            "elapsed_seconds": 9.358,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 0,
+            "productive_steps": 2,
+            "distinct_evidence_count": 2,
+            "decisions_since_progress": {},
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": false,
+              "failed_steps": []
+            },
+            "successful_steps": 2,
+            "inspection_results": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "data": {
+                  "volume": 75,
+                  "muted": false
+                },
+                "summary": "System volume: 75%; not muted."
+              },
+              {
+                "step_number": 2,
+                "capability": "get_frontmost_application",
+                "data": {
+                  "name": "Safari"
+                },
+                "summary": "Frontmost application: Safari."
+              }
+            ],
+            "step_trace": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              },
+              {
+                "step_number": 2,
+                "capability": "get_frontmost_application",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              }
+            ],
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": {
+              "capability": "get_frontmost_application",
+              "success": true,
+              "status": "success",
+              "data": {
+                "name": "Safari",
+                "bundle_identifier": "com.apple.Safari",
+                "process_identifier": 1691,
+                "action": "inspect",
+                "context": "frontmost_application"
+              },
+              "message": "Capability 'get_frontmost_application' executed successfully.",
+              "error": null,
+              "requires_confirmation": false,
+              "recovery_type": null,
+              "retry_same_action": null,
+              "recovery_guidance": null
+            }
+          }
+        },
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "PASS",
+        "issues": [],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 9.428
+    },
+    {
+      "case": {
+        "id": "two_step",
+        "suite": "quick",
+        "mode": "agent",
+        "message": "Read the current system volume, then identify the frontmost application. Report both observations. Do not change anything.",
+        "route": "agent",
+        "required": [
+          "get_system_volume",
+          "get_frontmost_application"
+        ],
+        "minimum": 2
+      },
+      "started_utc": "2026-10-07T06:10:49.340855+00:00",
+      "conversation_id": "23021326-f47b-49e8-a7a0-183d2927343d",
+      "request": {
+        "message": "Read the current system volume, then identify the frontmost application. Report both observations. Do not change anything.",
+        "mode": "agent",
+        "conversation_id": "23021326-f47b-49e8-a7a0-183d2927343d"
+      },
+      "response": {
+        "answer": "Your system volume is 75%, and sound is not muted. Safari is the frontmost application.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.\n- Step 2: Frontmost application: Safari.",
+        "search_query": "Read the current system volume, then identify the frontmost application. Report both observations. Do not change anything.",
+        "sources": [],
+        "tools_used": [
+          "get_system_volume",
+          "get_frontmost_application"
+        ],
+        "route": "agent",
+        "agent": {
+          "run_id": "66fb5b11-9aaf-4322-8f2b-c620a125c3f3",
+          "status": "completed",
+          "reason": "goal_satisfied",
+          "confirmation_id": null,
+          "resume_token": null,
+          "diagnostics": {
+            "run_id": "66fb5b11-9aaf-4322-8f2b-c620a125c3f3",
+            "status": "completed",
+            "terminal": true,
+            "reason": "goal_satisfied",
+            "summary": "Your system volume is 75%, and sound is not muted. Safari is the frontmost application.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.\n- Step 2: Frontmost application: Safari.",
+            "steps": 2,
+            "failures": 0,
+            "decision_calls": 3,
+            "model_calls": 3,
+            "tool_calls": 2,
+            "global_steps_used": 8,
+            "elapsed_seconds": 3.917,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 0,
+            "productive_steps": 2,
+            "distinct_evidence_count": 2,
+            "decisions_since_progress": {},
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": false,
+              "failed_steps": []
+            },
+            "successful_steps": 2,
+            "inspection_results": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "data": {
+                  "volume": 75,
+                  "muted": false
+                },
+                "summary": "System volume: 75%; not muted."
+              },
+              {
+                "step_number": 2,
+                "capability": "get_frontmost_application",
+                "data": {
+                  "name": "Safari"
+                },
+                "summary": "Frontmost application: Safari."
+              }
+            ],
+            "step_trace": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              },
+              {
+                "step_number": 2,
+                "capability": "get_frontmost_application",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              }
+            ],
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": {
+              "capability": "get_frontmost_application",
+              "success": true,
+              "status": "success",
+              "data": {
+                "name": "Safari",
+                "bundle_identifier": "com.apple.Safari",
+                "process_identifier": 1691,
+                "action": "inspect",
+                "context": "frontmost_application"
+              },
+              "message": "Capability 'get_frontmost_application' executed successfully.",
+              "error": null,
+              "requires_confirmation": false,
+              "recovery_type": null,
+              "retry_same_action": null,
+              "recovery_guidance": null
+            }
+          }
+        },
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "PASS",
+        "issues": [],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 3.942
+    },
+    {
+      "case": {
+        "id": "ambiguous_target",
+        "suite": "full",
+        "mode": "agent",
+        "message": "Inspect the file I meant earlier. I have not provided its path in this conversation. Ask me which file; do not guess, access files, or change anything.",
+        "route": "agent",
+        "required": [],
+        "minimum": 0,
+        "expected_status": "waiting_for_user",
+        "no_tools": true
+      },
+      "started_utc": "2026-10-07T06:10:53.283994+00:00",
+      "conversation_id": "9a741935-050f-481f-b6ab-c9d0dd76cd74",
+      "request": {
+        "message": "Inspect the file I meant earlier. I have not provided its path in this conversation. Ask me which file; do not guess, access files, or change anything.",
+        "mode": "agent",
+        "conversation_id": "9a741935-050f-481f-b6ab-c9d0dd76cd74"
+      },
+      "response": {
+        "answer": "Which file would you like to inspect?",
+        "search_query": "Inspect the file I meant earlier. I have not provided its path in this conversation. Ask me which file; do not guess, access files, or change anything.",
+        "sources": [],
+        "tools_used": [],
+        "route": "agent",
+        "agent": {
+          "run_id": "a241f109-372e-49aa-a852-b2d29a537bcf",
+          "status": "waiting_for_user",
+          "reason": null,
+          "confirmation_id": null,
+          "resume_token": "1cbf9dd5-0973-44ed-be95-f714b21ceb93",
+          "diagnostics": {
+            "run_id": "a241f109-372e-49aa-a852-b2d29a537bcf",
+            "status": "waiting_for_user",
+            "terminal": false,
+            "reason": null,
+            "summary": "Which file would you like to inspect?",
+            "steps": 0,
+            "failures": 0,
+            "decision_calls": 1,
+            "model_calls": 1,
+            "tool_calls": 0,
+            "global_steps_used": 2,
+            "elapsed_seconds": 6.942,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 0,
+            "productive_steps": 0,
+            "distinct_evidence_count": 0,
+            "decisions_since_progress": {},
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": false,
+              "failed_steps": []
+            },
+            "successful_steps": 0,
+            "inspection_results": [],
+            "step_trace": [],
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": null
+          }
+        },
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "PASS",
+        "issues": [],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "cancellation_request": {
+        "message": "cancel",
+        "conversation_id": "9a741935-050f-481f-b6ab-c9d0dd76cd74",
+        "run_id": "a241f109-372e-49aa-a852-b2d29a537bcf",
+        "confirmation_id": null,
+        "resume_token": "1cbf9dd5-0973-44ed-be95-f714b21ceb93"
+      },
+      "cancellation_response": {
+        "answer": "I cancelled the task.",
+        "search_query": "cancel",
+        "sources": [],
+        "tools_used": [],
+        "route": "agent",
+        "agent": {
+          "run_id": "a241f109-372e-49aa-a852-b2d29a537bcf",
+          "status": "cancelled",
+          "reason": "user_cancelled",
+          "confirmation_id": null,
+          "resume_token": null,
+          "diagnostics": {
+            "run_id": "a241f109-372e-49aa-a852-b2d29a537bcf",
+            "status": "cancelled",
+            "terminal": true,
+            "reason": "user_cancelled",
+            "summary": "I cancelled the task.",
+            "steps": 0,
+            "failures": 0,
+            "decision_calls": 1,
+            "model_calls": 1,
+            "tool_calls": 0,
+            "global_steps_used": 2,
+            "elapsed_seconds": 6.953,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 0,
+            "productive_steps": 0,
+            "distinct_evidence_count": 0,
+            "decisions_since_progress": {},
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": false,
+              "failed_steps": []
+            },
+            "successful_steps": 0,
+            "inspection_results": [],
+            "step_trace": [],
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": null
+          }
+        },
+        "agent_error": null
+      },
+      "elapsed_seconds": 6.97
+    },
+    {
+      "case": {
+        "id": "five_step",
+        "suite": "full",
+        "mode": "agent",
+        "message": "Perform these five inspections: read system volume; identify the frontmost application; list running applications; list Finder windows; inspect the frontmost window. Report each result or the specific inspection that failed. Do not change anything.",
+        "route": "agent",
+        "required": [
+          "get_system_volume",
+          "get_frontmost_application",
+          "get_running_applications",
+          "get_finder_windows",
+          "get_frontmost_window"
+        ],
+        "minimum": 5
+      },
+      "started_utc": "2026-10-07T06:11:00.255980+00:00",
+      "conversation_id": "f04f0ee8-24ef-4c62-9b0c-04477005db0f",
+      "request": {
+        "message": "Perform these five inspections: read system volume; identify the frontmost application; list running applications; list Finder windows; inspect the frontmost window. Report each result or the specific inspection that failed. Do not change anything.",
+        "mode": "agent",
+        "conversation_id": "f04f0ee8-24ef-4c62-9b0c-04477005db0f"
+      },
+      "response": {
+        "answer": "I stopped because the planner could not produce a valid next step: AgentPlannerError: Planner failed after one repair attempt.Initial error: Planner returned invalid JSON..Repair error: Planner returned an invalid decision_type: 'correct' 3 earlier tool step(s) succeeded; those actions have not been undone.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.\n- Step 2: Frontmost application: Safari.",
+        "search_query": "Perform these five inspections: read system volume; identify the frontmost application; list running applications; list Finder windows; inspect the frontmost window. Report each result or the specific inspection that failed. Do not change anything.",
+        "sources": [],
+        "tools_used": [
+          "get_system_volume",
+          "get_frontmost_application",
+          "get_running_applications"
+        ],
+        "route": "agent",
+        "agent": {
+          "run_id": "c922980a-fd08-48ec-98ac-da2859d8cc00",
+          "status": "failed",
+          "reason": "planner_error",
+          "confirmation_id": null,
+          "resume_token": null,
+          "diagnostics": {
+            "run_id": "c922980a-fd08-48ec-98ac-da2859d8cc00",
+            "status": "failed",
+            "terminal": true,
+            "reason": "planner_error",
+            "summary": "I stopped because the planner could not produce a valid next step: AgentPlannerError: Planner failed after one repair attempt.Initial error: Planner returned invalid JSON..Repair error: Planner returned an invalid decision_type: 'correct' 3 earlier tool step(s) succeeded; those actions have not been undone.\n\nObserved results:\n- Step 1: System volume: 75%; not muted.\n- Step 2: Frontmost application: Safari.",
+            "steps": 3,
+            "failures": 1,
+            "decision_calls": 4,
+            "model_calls": 5,
+            "tool_calls": 3,
+            "global_steps_used": 12,
+            "elapsed_seconds": 51.225,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 0,
+            "productive_steps": 3,
+            "distinct_evidence_count": 3,
+            "decisions_since_progress": {},
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": true,
+              "failed_steps": []
+            },
+            "successful_steps": 3,
+            "inspection_results": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "data": {
+                  "volume": 75,
+                  "muted": false
+                },
+                "summary": "System volume: 75%; not muted."
+              },
+              {
+                "step_number": 2,
+                "capability": "get_frontmost_application",
+                "data": {
+                  "name": "Safari"
+                },
+                "summary": "Frontmost application: Safari."
+              }
+            ],
+            "step_trace": [
+              {
+                "step_number": 1,
+                "capability": "get_system_volume",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              },
+              {
+                "step_number": 2,
+                "capability": "get_frontmost_application",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              },
+              {
+                "step_number": 3,
+                "capability": "get_running_applications",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              }
+            ],
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": {
+              "capability": "get_running_applications",
+              "success": true,
+              "status": "success",
+              "data": {
+                "applications": [
+                  {
+                    "name": "Accessibility",
+                    "bundle_identifier": "com.apple.AccessibilityUIServer",
+                    "process_identifier": 1020,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "AirPlay Screen Mirroring",
+                    "bundle_identifier": "com.apple.AirPlayUIAgent",
+                    "process_identifier": 1893,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "AppSSODaemon",
+                    "bundle_identifier": null,
+                    "process_identifier": 95056,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "AuthenticationServicesAgent",
+                    "bundle_identifier": "com.apple.AuthenticationServicesCore.AuthenticationServicesAgent",
+                    "process_identifier": 1267,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "AuthenticationServicesHelper (Safari)",
+                    "bundle_identifier": "com.apple.AuthenticationServices.Helper",
+                    "process_identifier": 3116,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "AutoFill (Brave Browser)",
+                    "bundle_identifier": "com.apple.SafariPlatformSupport.Helper",
+                    "process_identifier": 10378,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "AutoFill (Control Centre Helper)",
+                    "bundle_identifier": "com.apple.SafariPlatformSupport.Helper",
+                    "process_identifier": 53894,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "BatteriesAvocadoWidget",
+                    "bundle_identifier": "com.apple.Batteries.BatteriesAvocadoWidgetExtension",
+                    "process_identifier": 1255,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Brave Browser",
+                    "bundle_identifier": "com.brave.Browser",
+                    "process_identifier": 1694,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Brave Browser Helper",
+                    "bundle_identifier": "com.brave.Browser.helper",
+                    "process_identifier": 1950,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "CalendarWidgetExtension",
+                    "bundle_identifier": "com.apple.iCal.CalendarWidgetExtension",
+                    "process_identifier": 1193,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "CampoRemoteService",
+                    "bundle_identifier": "com.apple.CampoRemoteService",
+                    "process_identifier": 8477,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "chronod",
+                    "bundle_identifier": "com.apple.chronod",
+                    "process_identifier": 1029,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Code",
+                    "bundle_identifier": "com.microsoft.VSCode",
+                    "process_identifier": 1692,
+                    "active": true,
+                    "hidden": false
+                  },
+                  {
+                    "name": "com.apple.CoreSimulator.CoreSimulatorService",
+                    "bundle_identifier": "com.apple.CoreSimulator.CoreSimulatorService",
+                    "process_identifier": 4781,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "com.apple.PressAndHold",
+                    "bundle_identifier": "com.apple.PressAndHold",
+                    "process_identifier": 1597,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "com.apple.Safari.SandboxBroker (Safari)",
+                    "bundle_identifier": "com.apple.Safari.SandboxBroker",
+                    "process_identifier": 20709,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Control Centre",
+                    "bundle_identifier": "com.apple.controlcenter",
+                    "process_identifier": 1017,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Control Centre Helper",
+                    "bundle_identifier": "com.apple.controlcenter.helper",
+                    "process_identifier": 53891,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "CoreLocationAgent",
+                    "bundle_identifier": "com.apple.CoreLocationAgent",
+                    "process_identifier": 62981,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "CoreServicesUIAgent",
+                    "bundle_identifier": "com.apple.coreservices.uiagent",
+                    "process_identifier": 37353,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "CursorUIViewService",
+                    "bundle_identifier": "com.apple.TextInputUI.xpc.CursorUIViewService",
+                    "process_identifier": 1600,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Dock",
+                    "bundle_identifier": "com.apple.dock",
+                    "process_identifier": 1700,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Dock Extra",
+                    "bundle_identifier": "com.apple.dock.extra",
+                    "process_identifier": 1723,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "familycircled",
+                    "bundle_identifier": null,
+                    "process_identifier": 64123,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Finder",
+                    "bundle_identifier": "com.apple.finder",
+                    "process_identifier": 1703,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "FindMyWidgetItems",
+                    "bundle_identifier": "com.apple.findmy.FindMyWidgetItems",
+                    "process_identifier": 1229,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "FindMyWidgetPeople",
+                    "bundle_identifier": "com.apple.findmy.FindMyWidgetPeople",
+                    "process_identifier": 1204,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "HomeEnergyWidgets",
+                    "bundle_identifier": "com.apple.Home.HomeEnergyWidgets",
+                    "process_identifier": 1164,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "HomeWidget",
+                    "bundle_identifier": "com.apple.Home.HomeWidget.Interactive",
+                    "process_identifier": 1206,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "JournalWidget",
+                    "bundle_identifier": "com.apple.journal.widgets",
+                    "process_identifier": 1228,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "JournalWidget",
+                    "bundle_identifier": "com.apple.journal.widgets.secure",
+                    "process_identifier": 1256,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Keychain Circle Notification",
+                    "bundle_identifier": "com.apple.security.Keychain-Circle-Notification",
+                    "process_identifier": 15194,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "LocalAuthenticationRemoteService (Safari)",
+                    "bundle_identifier": "com.apple.LocalAuthenticationRemoteService",
+                    "process_identifier": 3015,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "loginwindow",
+                    "bundle_identifier": "com.apple.loginwindow",
+                    "process_identifier": 602,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "LookupViewService (Safari)",
+                    "bundle_identifier": "com.apple.LookupViewService",
+                    "process_identifier": 24491,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "macOSWidgetExtension",
+                    "bundle_identifier": "com.apple.reminders.WidgetExtension",
+                    "process_identifier": 1247,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Mail",
+                    "bundle_identifier": "com.apple.mail",
+                    "process_identifier": 8472,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Mail Networking",
+                    "bundle_identifier": "com.apple.WebKit.Networking",
+                    "process_identifier": 8494,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "MenuBarAgent",
+                    "bundle_identifier": "com.apple.MenuBarAgent",
+                    "process_identifier": 1082,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Messages",
+                    "bundle_identifier": "com.apple.MobileSMS",
+                    "process_identifier": 1697,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "MobileDeviceUpdater",
+                    "bundle_identifier": "com.apple.MobileDeviceUpdater",
+                    "process_identifier": 9477,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Music",
+                    "bundle_identifier": "com.apple.Music",
+                    "process_identifier": 1698,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Notes",
+                    "bundle_identifier": "com.apple.Notes",
+                    "process_identifier": 1690,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Notification Centre",
+                    "bundle_identifier": "com.apple.notificationcenterui",
+                    "process_identifier": 1026,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "nsattributedstringagent",
+                    "bundle_identifier": "com.apple.textkit.nsattributedstringagent",
+                    "process_identifier": 15263,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "nsattributedstringagent",
+                    "bundle_identifier": "com.apple.textkit.nsattributedstringagent",
+                    "process_identifier": 15262,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Ollama",
+                    "bundle_identifier": "com.electron.ollama",
+                    "process_identifier": 1902,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Open and Save Panel Service (com.apple.Safari.SandboxBroker (Safari))",
+                    "bundle_identifier": "com.apple.appkit.xpc.openAndSavePanelService",
+                    "process_identifier": 90536,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Open and Save Panel Service (Safari)",
+                    "bundle_identifier": "com.apple.appkit.xpc.openAndSavePanelService",
+                    "process_identifier": 1922,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Passwords Extension Helper (Brave Browser)",
+                    "bundle_identifier": "com.apple.PasswordManagerBrowserExtensionHelper",
+                    "process_identifier": 1918,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "photolibraryd",
+                    "bundle_identifier": "com.apple.photolibraryd",
+                    "process_identifier": 25535,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "PhotosReliveWidget",
+                    "bundle_identifier": "com.apple.Photos.PhotosReliveWidget",
+                    "process_identifier": 14616,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Podcasts",
+                    "bundle_identifier": "com.apple.podcasts.widget",
+                    "process_identifier": 1163,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "PowerChime",
+                    "bundle_identifier": "com.apple.PowerChime",
+                    "process_identifier": 31156,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Preview",
+                    "bundle_identifier": "com.apple.Preview",
+                    "process_identifier": 6963,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "QLPreviewGenerationExtension (Finder)",
+                    "bundle_identifier": "com.apple.QuickLookUIFramework.QLPreviewGenerationExtension",
+                    "process_identifier": 66873,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "QuickLookUIService (Finder)",
+                    "bundle_identifier": "com.apple.quicklook.QuickLookUIService",
+                    "process_identifier": 63444,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "QuickLookUIService (Open and Save Panel Service (Safari))",
+                    "bundle_identifier": "com.apple.quicklook.QuickLookUIService",
+                    "process_identifier": 1925,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari",
+                    "bundle_identifier": "com.apple.Safari",
+                    "process_identifier": 1691,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Graphics and Media",
+                    "bundle_identifier": "com.apple.WebKit.GPU",
+                    "process_identifier": 1814,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Networking",
+                    "bundle_identifier": "com.apple.WebKit.Networking",
+                    "process_identifier": 1811,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Service Worker (claude.ai)",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 61731,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 2201,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 12928,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 14505,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 14955,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 14971,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 43331,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 59315,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 59439,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 60720,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 61441,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 61455,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 62536,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Safari Web Content",
+                    "bundle_identifier": "com.apple.WebKit.WebContent",
+                    "process_identifier": 15327,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Screen Time",
+                    "bundle_identifier": "com.apple.ScreenTimeWidgetApplication.ScreenTimeWidgetExtension",
+                    "process_identifier": 1266,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "ShareSheetUI (Finder)",
+                    "bundle_identifier": "com.apple.sharing.ShareSheetUI",
+                    "process_identifier": 26349,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "sharingd",
+                    "bundle_identifier": "com.apple.sharingd",
+                    "process_identifier": 978,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Shortcuts",
+                    "bundle_identifier": "com.apple.WorkflowKit.ShortcutsViewService",
+                    "process_identifier": 66602,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "ShortcutsWidgetExtension",
+                    "bundle_identifier": "com.apple.shortcuts.ShortcutsWidget",
+                    "process_identifier": 1253,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "SimulatorTrampoline",
+                    "bundle_identifier": "com.apple.CoreSimulator.SimulatorTrampoline",
+                    "process_identifier": 4782,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Single Sign-On",
+                    "bundle_identifier": "com.apple.AppSSOAgent",
+                    "process_identifier": 4131,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Siri",
+                    "bundle_identifier": "com.apple.campo",
+                    "process_identifier": 1710,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Siri",
+                    "bundle_identifier": "com.apple.Siri",
+                    "process_identifier": 1887,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "SiriNCService",
+                    "bundle_identifier": "com.apple.SiriNCService",
+                    "process_identifier": 2065,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "SoftwareUpdateNotificationManager",
+                    "bundle_identifier": "com.apple.SoftwareUpdateNotificationManager",
+                    "process_identifier": 92112,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Spotify",
+                    "bundle_identifier": "com.spotify.client",
+                    "process_identifier": 11776,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Stella",
+                    "bundle_identifier": "com.dukeauth.Stella",
+                    "process_identifier": 15725,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "StocksWidget",
+                    "bundle_identifier": "com.apple.stocks.widget",
+                    "process_identifier": 1220,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "SystemUIServer",
+                    "bundle_identifier": "com.apple.systemuiserver",
+                    "process_identifier": 1701,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "talagentd",
+                    "bundle_identifier": "com.apple.talagent",
+                    "process_identifier": 1087,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Terminal",
+                    "bundle_identifier": "com.apple.Terminal",
+                    "process_identifier": 1693,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "TextInputMenuAgent",
+                    "bundle_identifier": "com.apple.TextInputMenuAgent",
+                    "process_identifier": 1897,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "ThemeWidgetControlViewService (Code)",
+                    "bundle_identifier": "com.apple.appkit.xpc.ThemeWidgetControlViewService",
+                    "process_identifier": 1840,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "ThemeWidgetControlViewService (Safari)",
+                    "bundle_identifier": "com.apple.appkit.xpc.ThemeWidgetControlViewService",
+                    "process_identifier": 2293,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "TipsWidgetExtension",
+                    "bundle_identifier": "com.apple.tips.Widget",
+                    "process_identifier": 1159,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "UIKitSystem",
+                    "bundle_identifier": "com.apple.UIKitSystemApp",
+                    "process_identifier": 1105,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "universalAccessAuthWarn",
+                    "bundle_identifier": "com.apple.accessibility.universalAccessAuthWarn",
+                    "process_identifier": 30810,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "universalaccessd",
+                    "bundle_identifier": null,
+                    "process_identifier": 925,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "UserNotificationCenter",
+                    "bundle_identifier": "com.apple.UserNotificationCenter",
+                    "process_identifier": 1860,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "ViewBridgeAuxiliary",
+                    "bundle_identifier": "com.apple.ViewBridgeAuxiliary",
+                    "process_identifier": 1091,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Wallpaper",
+                    "bundle_identifier": "com.apple.wallpaper.agent",
+                    "process_identifier": 1227,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "WeatherWidget",
+                    "bundle_identifier": "com.apple.weather.widget",
+                    "process_identifier": 1187,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Wi-Fi",
+                    "bundle_identifier": "com.apple.wifi.WiFiAgent",
+                    "process_identifier": 951,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "WindowManager",
+                    "bundle_identifier": "com.apple.WindowManager",
+                    "process_identifier": 1084,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "World Clock",
+                    "bundle_identifier": "com.apple.clock.WorldClockWidget",
+                    "process_identifier": 1186,
+                    "active": false,
+                    "hidden": false
+                  },
+                  {
+                    "name": "Xcode",
+                    "bundle_identifier": "com.apple.dt.Xcode",
+                    "process_identifier": 28914,
+                    "active": false,
+                    "hidden": false
+                  }
+                ],
+                "count": 108,
+                "action": "inspect",
+                "context": "running_applications"
+              },
+              "message": "Capability 'get_running_applications' executed successfully.",
+              "error": null,
+              "requires_confirmation": false,
+              "recovery_type": null,
+              "retry_same_action": null,
+              "recovery_guidance": null
+            }
+          }
+        },
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "FAIL",
+        "issues": [
+          "Required capability not reported: get_finder_windows, get_frontmost_window",
+          "Run did not complete: failed / planner_error",
+          "Insufficient successful steps: 3; need 5",
+          "No successful traced execution: get_finder_windows",
+          "No successful traced execution: get_frontmost_window"
+        ],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 51.251
+    },
+    {
+      "case": {
+        "id": "gather_then_answer",
+        "suite": "full",
+        "mode": "agent",
+        "message": "Find out which application is in front and inspect its windows. Use those observations to describe my current workspace. Do not open, close, move, resize, or change anything.",
+        "route": "agent",
+        "required": [
+          "get_frontmost_application",
+          "get_application_windows"
+        ],
+        "minimum": 2
+      },
+      "started_utc": "2026-10-07T06:11:51.510436+00:00",
+      "conversation_id": "7d5a4638-c27e-408b-b433-792b95e85762",
+      "request": {
+        "message": "Find out which application is in front and inspect its windows. Use those observations to describe my current workspace. Do not open, close, move, resize, or change anything.",
+        "mode": "agent",
+        "conversation_id": "7d5a4638-c27e-408b-b433-792b95e85762"
+      },
+      "response": {
+        "answer": "I stopped because recent tool steps produced no new evidence or successful new action. 5 earlier tool step(s) succeeded; those actions have not been undone.\n\nObserved results:\n- Step 5: Frontmost application: Safari.",
+        "search_query": "Find out which application is in front and inspect its windows. Use those observations to describe my current workspace. Do not open, close, move, resize, or change anything.",
+        "sources": [],
+        "tools_used": [
+          "get_frontmost_application",
+          "get_finder_windows"
+        ],
+        "route": "agent",
+        "agent": {
+          "run_id": "103308a9-b83c-4b7d-b193-994fedb49011",
+          "status": "blocked",
+          "reason": "no_progress",
+          "confirmation_id": null,
+          "resume_token": null,
+          "diagnostics": {
+            "run_id": "103308a9-b83c-4b7d-b193-994fedb49011",
+            "status": "blocked",
+            "terminal": true,
+            "reason": "no_progress",
+            "summary": "I stopped because recent tool steps produced no new evidence or successful new action. 5 earlier tool step(s) succeeded; those actions have not been undone.\n\nObserved results:\n- Step 5: Frontmost application: Safari.",
+            "steps": 5,
+            "failures": 0,
+            "decision_calls": 5,
+            "model_calls": 5,
+            "tool_calls": 5,
+            "global_steps_used": 15,
+            "elapsed_seconds": 86.19,
+            "runtime_budget_seconds": 180.0,
+            "runtime_enforcement": "cooperative_boundaries_including_confirmation_wait",
+            "completion_check_used": false,
+            "consecutive_failures": 0,
+            "no_progress_steps": 3,
+            "productive_steps": 2,
+            "distinct_evidence_count": 2,
+            "decisions_since_progress": {
+              "683bbdefdc066765c4af4dd2aba085692b1957031d20541450a0b307f483ce7e": 1,
+              "6636f6d8600e7af7f01842afe58408cae1d97bb8de0aa9c18599f95359717cbf": 2
+            },
+            "limits": {
+              "max_steps": 15,
+              "confirmation_timeout_seconds": 60.0,
+              "max_runtime_seconds": 180.0,
+              "max_global_steps": 64,
+              "max_model_calls": 24,
+              "max_failures": 3,
+              "max_consecutive_failures": 2,
+              "max_no_progress_steps": 3,
+              "max_repeated_decisions": 3
+            },
+            "recovery": {
+              "planner_failure": false,
+              "failed_steps": []
+            },
+            "successful_steps": 5,
+            "inspection_results": [
+              {
+                "step_number": 5,
+                "capability": "get_frontmost_application",
+                "data": {
+                  "name": "Safari"
+                },
+                "summary": "Frontmost application: Safari."
+              }
+            ],
+            "step_trace": [
+              {
+                "step_number": 1,
+                "capability": "get_frontmost_application",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              },
+              {
+                "step_number": 2,
+                "capability": "get_finder_windows",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              },
+              {
+                "step_number": 3,
+                "capability": "get_finder_windows",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              },
+              {
+                "step_number": 4,
+                "capability": "get_frontmost_application",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              },
+              {
+                "step_number": 5,
+                "capability": "get_frontmost_application",
+                "success": true,
+                "status": "success",
+                "recovery_type": null
+              }
+            ],
+            "pending_confirmation_step": null,
+            "confirmation": null,
+            "confirmation_events": [],
+            "final_observation": {
+              "capability": "get_frontmost_application",
+              "success": true,
+              "status": "success",
+              "data": {
+                "name": "Safari",
+                "bundle_identifier": "com.apple.Safari",
+                "process_identifier": 1691,
+                "action": "inspect",
+                "context": "frontmost_application"
+              },
+              "message": "Capability 'get_frontmost_application' executed successfully.",
+              "error": null,
+              "requires_confirmation": false,
+              "recovery_type": null,
+              "retry_same_action": null,
+              "recovery_guidance": null
+            }
+          }
+        },
+        "agent_error": null
+      },
+      "evaluation": {
+        "status": "FAIL",
+        "issues": [
+          "Required capability not reported: get_application_windows",
+          "Run did not complete: blocked / no_progress",
+          "No successful traced execution: get_application_windows"
+        ],
+        "stop": false,
+        "manual_review": "Check that the answer accurately reports observed data and satisfies every requested part. Automated PASS is not semantic proof."
+      },
+      "elapsed_seconds": 86.221
+    }
+  ],
+  "planned_cases": [
+    "chat_control",
+    "natural_auto",
+    "natural_forced",
+    "two_step",
+    "ambiguous_target",
+    "five_step",
+    "gather_then_answer"
+  ],
+  "health": {
+    "status": "ok",
+    "assistant": "Stella"
+  },
+  "interpretation": "Review the case checks and compare each answer with its observation. Milestone sign-off is still manual."
+}
